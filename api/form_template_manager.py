@@ -1,12 +1,23 @@
 from tinydb import TinyDB, Query
 import re
-
+import json
 # Путь к файлу базы данных TinyDB
 db_path = "api/tinydb_storage/templates.json"
 db = TinyDB(db_path)
 
 # Поддерживаемые типы данных
 SUPPORTED_FIELD_TYPES = {"email", "phone", "date", "text"}
+
+
+def prettify_json(file_path):
+    """
+    Преобразует JSON файл в читаемый формат с отступами.
+    """
+    with open(file_path, 'r') as file:
+        data = json.load(file)  # Загружаем данные из JSON
+
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4, ensure_ascii=False)  # Сохраняем с отступами
 
 def validate_template(template):
     """
@@ -33,7 +44,7 @@ def add_template(template):
     """
     validate_template(template)
     db.insert(template)
-
+    prettify_json(db_path)
 def get_templates():
     """
     Получение всех шаблонов.
