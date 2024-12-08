@@ -40,6 +40,6 @@ class DynamicForm(forms.Form):
             elif field_type == "date":
                 form_fields[field] = forms.DateField(label=field.capitalize(), widget=forms.DateInput(attrs={'type': 'date'}))
             elif field_type == "text":
-                form_fields[field] = forms.CharField(label=field.capitalize(), widget=forms.Textarea)
+                form_fields[field] = forms.CharField(label=field.capitalize(), widget=forms.Textarea, required=False)
 
         return type("DynamicForm", (cls,), form_fields)
