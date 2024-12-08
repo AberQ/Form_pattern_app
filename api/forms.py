@@ -1,5 +1,6 @@
 from django import forms
 from tinydb import TinyDB, Query
+from django.core.validators import RegexValidator
 
 # TinyDB: путь к базе данных
 db_path = "api/tinydb_storage/templates.json"
@@ -27,7 +28,15 @@ class DynamicForm(forms.Form):
             if field_type == "email":
                 form_fields[field] = forms.EmailField(label=field.capitalize())
             elif field_type == "phone":
-                form_fields[field] = forms.CharField(label=field.capitalize(), max_length=15)
+                phone_validator = RegexValidator(
+                    regex=r'^\+?1?\d{9,15}$',
+                    message="Номер телефона должен быть в формате: '+999999999'. До 15 цифр."
+                )
+                form_fields[field] = forms.CharField(
+                    label=field.capitalize(),
+                    max_length=15,
+                    validators=[phone_validator],
+                )
             elif field_type == "date":
                 form_fields[field] = forms.DateField(label=field.capitalize(), widget=forms.DateInput(attrs={'type': 'date'}))
             elif field_type == "text":
