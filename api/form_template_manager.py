@@ -69,10 +69,10 @@ if __name__ == "__main__":
     # Пример шаблона формы
     template = {
         "name": "User Registration",
-        "field_name_1": "email",
-        "field_name_2": "phone",
-        "field_name_3": "date",
-        "field_name_4": "text"
+        "user_email": "email",
+        "user_phone": "phone",
+        "date": "date",
+        "description": "text"
     }
 
     try:
