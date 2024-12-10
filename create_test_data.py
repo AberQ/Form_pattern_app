@@ -45,11 +45,11 @@ def create_test_data():
 
     for template in templates:
         try:
-            add_template(template)  # Вызов функции для добавления шаблона в MongoDB
+            add_template(template)  
             print(f"Шаблон '{template['name']}' добавлен успешно!")
         except ValueError as e:
             print(f"Ошибка при добавлении шаблона '{template['name']}': {e}")
 
 
 if __name__ == "__main__":
-    create_test_data()  # Создание и добавление тестовых данных
+    create_test_data()  

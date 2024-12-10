@@ -3,6 +3,13 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from .forms import DynamicForm
 import re
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from tinydb import Query
+
+from .serializers import FormInputSerializer
+from .form_template_manager import db  
 def dynamic_form_view(request, template_name):
     """
     Представление для отображения динамической формы.
@@ -26,13 +33,7 @@ def dynamic_form_view(request, template_name):
 
 
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from tinydb import Query
 
-from .serializers import FormInputSerializer
-from .form_template_manager import db  
 
 def determine_field_type(value):
     """
@@ -59,7 +60,7 @@ def find_matching_template(data):
     Ищет подходящий шаблон в базе данных MongoDB.
     Если шаблон не найден, возвращает None и определяет типы всех полей.
     """
-    templates = db['templates'].find()  # Используем метод find для MongoDB
+    templates = db['templates'].find()  
     
     for template in templates:
         is_match = True
@@ -73,7 +74,7 @@ def find_matching_template(data):
                 break
 
         if is_match:
-            return template["name"]  # Возвращаем имя подходящего шаблона
+            return template["name"] 
     
     return None
 def get_field_types(data):

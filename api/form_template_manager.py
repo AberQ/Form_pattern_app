@@ -1,10 +1,10 @@
 from pymongo import MongoClient
 import json
 
-# Подключение к MongoDB
+
 client = MongoClient('mongo', 27017)
-db = client["my_database"]  # Имя базы данных
-collection = db["templates"]  # Имя коллекции
+db = client["my_database"]  
+collection = db["templates"]  
 
 SUPPORTED_FIELD_TYPES = {"email", "phone", "date", "text"}
 
@@ -39,7 +39,7 @@ def get_templates():
     """
     Получение всех шаблонов из MongoDB.
     """
-    templates = list(collection.find({}, {"_id": 0}))  # Исключение _id из результата
+    templates = list(collection.find({}, {"_id": 0}))  
     return templates
 
 def find_template_by_name(name):
@@ -62,7 +62,7 @@ def delete_template_by_name(name):
         print(f"Шаблон с именем '{name}' успешно удален.")
 
 if __name__ == "__main__":
-    # Пример использования
+ 
     templates = [
         {
             "name": "User Registration",
@@ -106,15 +106,15 @@ if __name__ == "__main__":
         for template in templates:
             add_template(template)
 
-        # Получение всех шаблонов
+        
         all_templates = get_templates()
         print("Список шаблонов:", json.dumps(all_templates, indent=4, ensure_ascii=False))
 
-        # Поиск шаблона по имени
+       
         template = find_template_by_name("User Registration")
         print("Найденный шаблон:", template)
 
-        # Удаление шаблона по имени
+     
         delete_template_by_name("Job Application")
 
     except ValueError as e:

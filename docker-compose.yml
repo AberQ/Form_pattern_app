@@ -11,6 +11,15 @@ services:
       - DJANGO_SETTINGS_MODULE=base.settings
     volumes:
       - .:/app
+    entrypoint: >
+      sh -c "
+      until nc -z mongo 27017; do
+        echo 'Waiting for MongoDB...';
+        sleep 5;
+      done;
+      echo 'MongoDB is ready!';
+      python create_test_data.py && python manage.py runserver 0.0.0.0:8000
+      "
 
   mongo:
     image: mongo:latest

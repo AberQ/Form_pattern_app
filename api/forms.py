@@ -12,7 +12,7 @@ class DynamicForm(forms.Form):
     """
     @classmethod
     def from_template(cls, template_name):
-        # Поиск шаблона в базе
+        
         query = Query()
         template = db.get(query.name == template_name)
 
