@@ -1,4 +1,4 @@
-from api.form_template_manager import add_template  # Импорт функции для добавления шаблонов
+from api.form_template_manager import add_template  
 
 def create_test_data():
     """
