@@ -6,6 +6,35 @@
             "user_phone": "phone",
             "date": "date",
             "description": "text"
+        },
+        "2": {
+            "name": "Event Registration",
+            "event_name": "text",
+            "event_date": "date",
+            "event_location": "text",
+            "event_contact_email": "email",
+            "event_contact_phone": "phone"
+        },
+        "3": {
+            "name": "Product Feedback",
+            "product_id": "text",
+            "rating": "text",
+            "feedback": "text"
+        },
+        "4": {
+            "name": "Job Application",
+            "applicant_name": "text",
+            "email": "email",
+            "applicant_phone": "phone",
+            "resume": "text"
+        },
+        "5": {
+            "name": "Customer Support Request",
+            "customer_name": "text",
+            "issue_description": "text",
+            "contact_email": "email",
+            "contact_phone": "phone",
+            "issue_date": "date"
         }
     }
 }

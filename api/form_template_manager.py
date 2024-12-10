@@ -66,30 +66,55 @@ def delete_template_by_name(name):
     db.remove(query.name == name)
 
 if __name__ == "__main__":
-    # Пример шаблона формы
-    template = {
-        "name": "User Registration",
-        "user_email": "email",
-        "user_phone": "phone",
-        "date": "date",
-        "description": "text"
-    }
+    # Пример шаблонов форм
+    templates = [
+        {
+            "name": "User Registration",
+            "user_email": "email",
+            "user_phone": "phone",
+            "date": "date",
+            "description": "text"
+        },
+        {
+            "name": "Event Registration",
+            "event_name": "text",
+            "event_date": "date",
+            "event_location": "text",
+            "event_contact_email": "email",
+            "event_contact_phone": "phone"
+        },
+        {
+            "name": "Product Feedback",
+            "product_id": "text",
+            "rating": "text",  # Можно заменить на "date", если это дата покупки
+            "feedback": "text"
+        },
+        {
+            "name": "Job Application",
+            "applicant_name": "text",
+            "applicant_email": "email",
+            "applicant_phone": "phone",
+            "resume": "text"  # Здесь может быть URL или описание резюме
+        },
+        {
+            "name": "Customer Support Request",
+            "customer_name": "text",
+            "issue_description": "text",
+            "contact_email": "email",
+            "contact_phone": "phone",
+            "issue_date": "date"
+        }
+    ]
 
     try:
-        # Добавление шаблона
-        add_template(template)
-        print("Шаблон добавлен успешно!")
+        # Добавление шаблонов
+        for template in templates:
+            add_template(template)
+            print(f"Шаблон '{template['name']}' добавлен успешно!")
 
         # Получение всех шаблонов
         templates = get_templates()
         print("Список шаблонов:", templates)
 
-        # Поиск шаблона
-        found_template = find_template_by_name("User Registration")
-        print("Найденный шаблон:", found_template)
-
-        # Удаление шаблона
-        #delete_template_by_name("User Registration")
-        #print("Шаблон удален успешно!")
     except ValueError as e:
         print(f"Ошибка: {e}")
