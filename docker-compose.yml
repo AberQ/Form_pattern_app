@@ -18,6 +18,7 @@ services:
         sleep 1;
       done;
       echo 'MongoDB is ready!';
+      echo 'ВНЕСЕНИЕ ТЕСТОВЫХ ДАННЫХ!';
       python create_test_data.py;
       python manage.py runserver 0.0.0.0:8000 & 
       echo 'Waiting for Django to start...';
@@ -26,7 +27,9 @@ services:
       done;
       echo 'Django is ready!';
       echo 'ВЫПОЛНЕНИЕ ТЕСТОВЫХ ЗАПРОСОВ!';
-      python test_requests.py && wait
+      python test_requests.py &&
+      echo 'Были внесены тестовые данные и выполнены тестовые запросы, приложение полностью готово к эксплуатации!' &&
+      wait
       "
 
   mongo:
