@@ -54,12 +54,16 @@ def find_matching_template(data):
     templates = db.all()  # Получение всех шаблонов
     for template in templates:
         is_match = True
-        for field, field_type in template.items():
+
+        # Проверяем только поля, переданные в запросе
+        for field, value in data.items():
             if field == "name":  # Игнорируем поле "name"
                 continue
-            if field not in data or determine_field_type(data[field]) != field_type:
+            # Если поля нет в шаблоне или тип значения не совпадает, шаблон не подходит
+            if field not in template or determine_field_type(value) != template[field]:
                 is_match = False
                 break
+
         if is_match:
             return template["name"]  # Возвращаем имя подходящего шаблона
     return None
@@ -72,6 +76,12 @@ class GetFormAPIView(APIView):
         try:
             # Получение данных из POST-запроса
             form_data = request.data  # DRF автоматически парсит JSON/форму
+
+            if not form_data:
+                return Response(
+                    {"error": "Данные формы отсутствуют."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
             # Поиск подходящего шаблона
             template_name = find_matching_template(form_data)
