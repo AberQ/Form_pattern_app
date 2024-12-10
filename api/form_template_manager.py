@@ -1,23 +1,12 @@
-from tinydb import TinyDB, Query
-import re
+from pymongo import MongoClient
 import json
 
-db_path = "api/tinydb_storage/templates.json"
-db = TinyDB(db_path)
-
+# Подключение к MongoDB
+client = MongoClient("mongodb://localhost:27017/")
+db = client["my_database"]  # Имя базы данных
+collection = db["templates"]  # Имя коллекции
 
 SUPPORTED_FIELD_TYPES = {"email", "phone", "date", "text"}
-
-
-def prettify_json(file_path):
-    """
-    Преобразует JSON файл в читаемый формат с отступами.
-    """
-    with open(file_path, 'r') as file:
-        data = json.load(file)  
-
-    with open(file_path, 'w') as file:
-        json.dump(data, file, indent=4, ensure_ascii=False)  
 
 def validate_template(template):
     """
@@ -40,33 +29,40 @@ def validate_template(template):
 
 def add_template(template):
     """
-    Добавление нового шаблона в базу данных.
+    Добавление нового шаблона в MongoDB.
     """
     validate_template(template)
-    db.insert(template)
-    prettify_json(db_path)
+    collection.insert_one(template)
+    print(f"Шаблон '{template['name']}' добавлен успешно!")
+
 def get_templates():
     """
-    Получение всех шаблонов.
+    Получение всех шаблонов из MongoDB.
     """
-    return db.all()
+    templates = list(collection.find({}, {"_id": 0}))  # Исключение _id из результата
+    return templates
 
 def find_template_by_name(name):
     """
     Поиск шаблона по имени.
     """
-    query = Query()
-    return db.search(query.name == name)
+    template = collection.find_one({"name": name}, {"_id": 0})
+    if not template:
+        print(f"Шаблон с именем '{name}' не найден.")
+    return template
 
 def delete_template_by_name(name):
     """
     Удаление шаблона по имени.
     """
-    query = Query()
-    db.remove(query.name == name)
+    result = collection.delete_one({"name": name})
+    if result.deleted_count == 0:
+        print(f"Шаблон с именем '{name}' не найден.")
+    else:
+        print(f"Шаблон с именем '{name}' успешно удален.")
 
 if __name__ == "__main__":
-  
+    # Пример использования
     templates = [
         {
             "name": "User Registration",
@@ -86,7 +82,7 @@ if __name__ == "__main__":
         {
             "name": "Product Feedback",
             "product_id": "text",
-            "rating": "text",  
+            "rating": "text",
             "feedback": "text"
         },
         {
@@ -94,7 +90,7 @@ if __name__ == "__main__":
             "applicant_name": "text",
             "applicant_email": "email",
             "applicant_phone": "phone",
-            "resume": "text"  
+            "resume": "text"
         },
         {
             "name": "Customer Support Request",
@@ -107,14 +103,19 @@ if __name__ == "__main__":
     ]
 
     try:
-      
         for template in templates:
             add_template(template)
-            print(f"Шаблон '{template['name']}' добавлен успешно!")
 
-     
-        templates = get_templates()
-        print("Список шаблонов:", templates)
+        # Получение всех шаблонов
+        all_templates = get_templates()
+        print("Список шаблонов:", json.dumps(all_templates, indent=4, ensure_ascii=False))
+
+        # Поиск шаблона по имени
+        template = find_template_by_name("User Registration")
+        print("Найденный шаблон:", template)
+
+        # Удаление шаблона по имени
+        delete_template_by_name("Job Application")
 
     except ValueError as e:
         print(f"Ошибка: {e}")
