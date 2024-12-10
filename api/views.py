@@ -37,20 +37,21 @@ from .form_template_manager import db  # Подключаем вашу TinyDB
 def determine_field_type(value):
     """
     Определяет тип значения на основе его формата.
+    Приоритет проверки: дата -> телефон -> email -> текст.
     """
-    if re.match(r"^\+7 \d{3} \d{3} \d{2} \d{2}$", value):  # Формат телефона: +7 xxx xxx xx xx
+    if re.match(r"^\d{4}-\d{2}-\d{2}$", value):  # Дата в формате YYYY-MM-DD
+        return "date"
+    elif re.match(r"^\+7 \d{3} \d{3} \d{2} \d{2}$", value):  # Телефон: +7 xxx xxx xx xx
         return "phone"
     elif re.match(r"^[\w\.-]+@[\w\.-]+\.\w{2,}$", value):  # Email
         return "email"
-    elif re.match(r"^\d{4}-\d{2}-\d{2}$", value):  # Дата в формате YYYY-MM-DD
-        return "date"
     else:
         return "text"
-
 
 def find_matching_template(data):
     """
     Ищет подходящий шаблон в базе данных TinyDB.
+    Если шаблон не найден, возвращает None и определяет типы всех полей.
     """
     templates = db.all()  # Получение всех шаблонов
     for template in templates:
@@ -67,7 +68,15 @@ def find_matching_template(data):
 
         if is_match:
             return template["name"]  # Возвращаем имя подходящего шаблона
+    
+    # Если шаблон не найден, возвращаем None
     return None
+
+def get_field_types(data):
+    """
+    Возвращает объект с именами полей и их определенными типами.
+    """
+    return {field: determine_field_type(value) for field, value in data.items()}
 
 class GetFormAPIView(APIView):
     """
@@ -90,6 +99,8 @@ class GetFormAPIView(APIView):
             if template_name:
                 return Response({"template_name": template_name}, status=status.HTTP_200_OK)
             else:
-                return Response({"error": "Шаблон не найден"}, status=status.HTTP_404_NOT_FOUND)
+                # Если шаблон не найден, возвращаем типы полей
+                field_types = get_field_types(form_data)
+                return Response(field_types, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
