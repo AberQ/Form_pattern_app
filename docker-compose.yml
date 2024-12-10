@@ -15,10 +15,17 @@ services:
       sh -c "
       until nc -z mongo 27017; do
         echo 'Waiting for MongoDB...';
-        sleep 5;
+        sleep 12;
       done;
       echo 'MongoDB is ready!';
-      python create_test_data.py && python manage.py runserver 0.0.0.0:8000
+      python create_test_data.py;
+      python manage.py runserver 0.0.0.0:8000 & 
+      echo 'Waiting for Django to start...';
+      until nc -z localhost 8000; do
+        sleep 7;
+      done;
+      echo 'Django is ready!';
+      python test_requests.py && wait
       "
 
   mongo:
