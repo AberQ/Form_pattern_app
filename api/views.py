@@ -38,7 +38,7 @@ def determine_field_type(value):
     """
     Определяет тип значения на основе его формата.
     """
-    if re.match(r"^\+?\d{10,15}$", value):  # Телефонный номер
+    if re.match(r"^\+7 \d{3} \d{3} \d{2} \d{2}$", value):  # Формат телефона: +7 xxx xxx xx xx
         return "phone"
     elif re.match(r"^[\w\.-]+@[\w\.-]+\.\w{2,}$", value):  # Email
         return "email"
@@ -46,6 +46,7 @@ def determine_field_type(value):
         return "date"
     else:
         return "text"
+
 
 def find_matching_template(data):
     """
