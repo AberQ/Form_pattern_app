@@ -39,14 +39,20 @@ def determine_field_type(value):
     Определяет тип значения на основе его формата.
     Приоритет проверки: дата -> телефон -> email -> текст.
     """
-    if re.match(r"^\d{4}-\d{2}-\d{2}$", value):  # Дата в формате YYYY-MM-DD
+    # Проверка на дату в формате YYYY-MM-DD
+    if re.match(r"^\d{4}-\d{2}-\d{2}$", value):  
         return "date"
-    elif re.match(r"^\+7 \d{3} \d{3} \d{2} \d{2}$", value):  # Телефон: +7 xxx xxx xx xx
+    
+    # Проверка на телефон в формате +7 xxx xxx xx xx
+    if re.match(r"^\+7 \d{3} \d{3} \d{2} \d{2}$", value):  
         return "phone"
-    elif re.match(r"^[\w\.-]+@[\w\.-]+\.\w{2,}$", value):  # Email
+    
+    # Проверка на email
+    if re.match(r"^[\w\.-]+@[\w\.-]+\.\w{2,}$", value):  
         return "email"
-    else:
-        return "text"
+    
+    # Если не подошло ни одно из правил — текст
+    return "text"
 
 def find_matching_template(data):
     """
