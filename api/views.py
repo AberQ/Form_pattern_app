@@ -56,14 +56,14 @@ def determine_field_type(value):
 
 def find_matching_template(data):
     """
-    Ищет подходящий шаблон в базе данных TinyDB.
+    Ищет подходящий шаблон в базе данных MongoDB.
     Если шаблон не найден, возвращает None и определяет типы всех полей.
     """
-    templates = db.all()  
+    templates = db['templates'].find()  # Используем метод find для MongoDB
+    
     for template in templates:
         is_match = True
 
-  
         for field, value in data.items():
             if field == "name":  
                 continue
@@ -73,11 +73,9 @@ def find_matching_template(data):
                 break
 
         if is_match:
-            return template["name"]  
+            return template["name"]  # Возвращаем имя подходящего шаблона
     
-   
     return None
-
 def get_field_types(data):
     """
     Возвращает объект с именами полей и их определенными типами.

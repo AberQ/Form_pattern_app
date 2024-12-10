@@ -2,7 +2,7 @@ from pymongo import MongoClient
 import json
 
 # Подключение к MongoDB
-client = MongoClient("mongodb://localhost:27017/")
+client = MongoClient('mongo', 27017)
 db = client["my_database"]  # Имя базы данных
 collection = db["templates"]  # Имя коллекции
 

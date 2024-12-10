@@ -1,8 +1,8 @@
-from api.form_template_manager import add_template
+from api.form_template_manager import add_template  # Импорт функции для добавления шаблонов
 
 def create_test_data():
     """
-    Создает тестовые данные и добавляет их в базу данных.
+    Создает тестовые данные и добавляет их в базу данных MongoDB.
     """
     templates = [
         {
@@ -45,11 +45,11 @@ def create_test_data():
 
     for template in templates:
         try:
-            add_template(template)
+            add_template(template)  # Вызов функции для добавления шаблона в MongoDB
             print(f"Шаблон '{template['name']}' добавлен успешно!")
         except ValueError as e:
             print(f"Ошибка при добавлении шаблона '{template['name']}': {e}")
 
 
 if __name__ == "__main__":
-    create_test_data()
+    create_test_data()  # Создание и добавление тестовых данных
