@@ -1,11 +1,11 @@
 from tinydb import TinyDB, Query
 import re
 import json
-# Путь к файлу базы данных TinyDB
+
 db_path = "api/tinydb_storage/templates.json"
 db = TinyDB(db_path)
 
-# Поддерживаемые типы данных
+
 SUPPORTED_FIELD_TYPES = {"email", "phone", "date", "text"}
 
 
@@ -14,10 +14,10 @@ def prettify_json(file_path):
     Преобразует JSON файл в читаемый формат с отступами.
     """
     with open(file_path, 'r') as file:
-        data = json.load(file)  # Загружаем данные из JSON
+        data = json.load(file)  
 
     with open(file_path, 'w') as file:
-        json.dump(data, file, indent=4, ensure_ascii=False)  # Сохраняем с отступами
+        json.dump(data, file, indent=4, ensure_ascii=False)  
 
 def validate_template(template):
     """
@@ -66,7 +66,7 @@ def delete_template_by_name(name):
     db.remove(query.name == name)
 
 if __name__ == "__main__":
-    # Пример шаблонов форм
+  
     templates = [
         {
             "name": "User Registration",
@@ -86,7 +86,7 @@ if __name__ == "__main__":
         {
             "name": "Product Feedback",
             "product_id": "text",
-            "rating": "text",  # Можно заменить на "date", если это дата покупки
+            "rating": "text",  
             "feedback": "text"
         },
         {
@@ -94,7 +94,7 @@ if __name__ == "__main__":
             "applicant_name": "text",
             "applicant_email": "email",
             "applicant_phone": "phone",
-            "resume": "text"  # Здесь может быть URL или описание резюме
+            "resume": "text"  
         },
         {
             "name": "Customer Support Request",
@@ -107,12 +107,12 @@ if __name__ == "__main__":
     ]
 
     try:
-        # Добавление шаблонов
+      
         for template in templates:
             add_template(template)
             print(f"Шаблон '{template['name']}' добавлен успешно!")
 
-        # Получение всех шаблонов
+     
         templates = get_templates()
         print("Список шаблонов:", templates)
 

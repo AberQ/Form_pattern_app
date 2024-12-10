@@ -15,9 +15,9 @@ def dynamic_form_view(request, template_name):
     if request.method == "POST":
         form = FormClass(request.POST)
         if form.is_valid():
-            # Обработка данных формы
+        
             print("Данные формы:", form.cleaned_data)
-            return HttpResponseRedirect("/success/")  # Перенаправление на страницу успеха
+            return HttpResponseRedirect("/success/")  
     else:
         form = FormClass()
 
@@ -32,26 +32,26 @@ from rest_framework import status
 from tinydb import Query
 
 from .serializers import FormInputSerializer
-from .form_template_manager import db  # Подключаем вашу TinyDB
+from .form_template_manager import db  
 
 def determine_field_type(value):
     """
     Определяет тип значения на основе его формата.
     Приоритет проверки: дата -> телефон -> email -> текст.
     """
-    # Проверка на дату в формате YYYY-MM-DD
+   
     if re.match(r"^\d{4}-\d{2}-\d{2}$", value):  
         return "date"
     
-    # Проверка на телефон в формате +7 xxx xxx xx xx
+   
     if re.match(r"^\+7 \d{3} \d{3} \d{2} \d{2}$", value):  
         return "phone"
     
-    # Проверка на email
+
     if re.match(r"^[\w\.-]+@[\w\.-]+\.\w{2,}$", value):  
         return "email"
     
-    # Если не подошло ни одно из правил — текст
+
     return "text"
 
 def find_matching_template(data):
@@ -59,23 +59,23 @@ def find_matching_template(data):
     Ищет подходящий шаблон в базе данных TinyDB.
     Если шаблон не найден, возвращает None и определяет типы всех полей.
     """
-    templates = db.all()  # Получение всех шаблонов
+    templates = db.all()  
     for template in templates:
         is_match = True
 
-        # Проверяем только поля, переданные в запросе
+  
         for field, value in data.items():
-            if field == "name":  # Игнорируем поле "name"
+            if field == "name":  
                 continue
-            # Если поля нет в шаблоне или тип значения не совпадает, шаблон не подходит
+         
             if field not in template or determine_field_type(value) != template[field]:
                 is_match = False
                 break
 
         if is_match:
-            return template["name"]  # Возвращаем имя подходящего шаблона
+            return template["name"]  
     
-    # Если шаблон не найден, возвращаем None
+   
     return None
 
 def get_field_types(data):
@@ -90,8 +90,8 @@ class GetFormAPIView(APIView):
     """
     def post(self, request):
         try:
-            # Получение данных из POST-запроса
-            form_data = request.data  # DRF автоматически парсит JSON/форму
+          
+            form_data = request.data  
 
             if not form_data:
                 return Response(
@@ -99,13 +99,13 @@ class GetFormAPIView(APIView):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
 
-            # Поиск подходящего шаблона
+         
             template_name = find_matching_template(form_data)
 
             if template_name:
                 return Response({"template_name": template_name}, status=status.HTTP_200_OK)
             else:
-                # Если шаблон не найден, возвращаем типы полей
+            
                 field_types = get_field_types(form_data)
                 return Response(field_types, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:

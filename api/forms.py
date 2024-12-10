@@ -2,7 +2,7 @@ from django import forms
 from tinydb import TinyDB, Query
 from django.core.validators import RegexValidator
 
-# TinyDB: путь к базе данных
+
 db_path = "api/tinydb_storage/templates.json"
 db = TinyDB(db_path)
 
@@ -19,11 +19,11 @@ class DynamicForm(forms.Form):
         if not template:
             raise ValueError(f"Шаблон с именем '{template_name}' не найден.")
 
-        # Создание динамического класса формы
+        
         form_fields = {}
         for field, field_type in template.items():
             if field == "name":
-                continue  # Поле 'name' не добавляется как поле формы
+                continue  
 
             if field_type == "email":
                 form_fields[field] = forms.EmailField(label=field.capitalize())
