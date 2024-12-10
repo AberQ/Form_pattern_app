@@ -33,12 +33,12 @@ def add_template(template):
     """
     validate_template(template)
 
-    # Проверяем существование шаблона
-    if collection.find_one({"name": template["name"]}):  # Прямой запрос к MongoDB
+   
+    if collection.find_one({"name": template["name"]}):  
         print(f"Шаблон с именем '{template['name']}' уже существует. Пропускаем добавление.")
         return
     
-    # Добавляем шаблон, если он уникален
+    
     collection.insert_one(template)
     print(f"Шаблон '{template['name']}' добавлен успешно!")
 
