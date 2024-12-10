@@ -29,9 +29,16 @@ def validate_template(template):
 
 def add_template(template):
     """
-    Добавление нового шаблона в MongoDB.
+    Добавление нового шаблона в MongoDB с проверкой на уникальность имени.
     """
     validate_template(template)
+
+    # Проверяем существование шаблона
+    if collection.find_one({"name": template["name"]}):  # Прямой запрос к MongoDB
+        print(f"Шаблон с именем '{template['name']}' уже существует. Пропускаем добавление.")
+        return
+    
+    # Добавляем шаблон, если он уникален
     collection.insert_one(template)
     print(f"Шаблон '{template['name']}' добавлен успешно!")
 

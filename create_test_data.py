@@ -46,7 +46,6 @@ def create_test_data():
     for template in templates:
         try:
             add_template(template)  
-            print(f"Шаблон '{template['name']}' добавлен успешно!")
         except ValueError as e:
             print(f"Ошибка при добавлении шаблона '{template['name']}': {e}")
 
