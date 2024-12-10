@@ -15,16 +15,17 @@ services:
       sh -c "
       until nc -z mongo 27017; do
         echo 'Waiting for MongoDB...';
-        sleep 12;
+        sleep 1;
       done;
       echo 'MongoDB is ready!';
       python create_test_data.py;
       python manage.py runserver 0.0.0.0:8000 & 
       echo 'Waiting for Django to start...';
       until nc -z localhost 8000; do
-        sleep 7;
+        sleep 1;
       done;
       echo 'Django is ready!';
+      echo 'ВЫПОЛНЕНИЕ ТЕСТОВЫХ ЗАПРОСОВ!';
       python test_requests.py && wait
       "
 
@@ -35,6 +36,8 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+      - ./mongod.conf:/etc/mongod.conf  # Монтируем конфигурационный файл
+    command: ["mongod", "--config", "/etc/mongod.conf"]  # Используем файл конфигурации
 
 volumes:
   mongo_data:
