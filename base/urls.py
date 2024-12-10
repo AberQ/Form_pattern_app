@@ -19,6 +19,5 @@ from django.urls import path
 from api.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("form/<str:template_name>/", dynamic_form_view, name="dynamic_form"),
     path('get_form/', GetFormAPIView.as_view(), name='get_form'),
 ]

@@ -1,7 +1,7 @@
 
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
-from .forms import DynamicForm
+
 import re
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,25 +10,6 @@ from tinydb import Query
 
 from .serializers import FormInputSerializer
 from .form_template_manager import db  
-def dynamic_form_view(request, template_name):
-    """
-    Представление для отображения динамической формы.
-    """
-    try:
-        FormClass = DynamicForm.from_template(template_name)
-    except ValueError as e:
-        return render(request, "error.html", {"error": str(e)})
-
-    if request.method == "POST":
-        form = FormClass(request.POST)
-        if form.is_valid():
-        
-            print("Данные формы:", form.cleaned_data)
-            return HttpResponseRedirect("/success/")  
-    else:
-        form = FormClass()
-
-    return render(request, "dynamic_form.html", {"form": form, "template_name": template_name})
 
 
 
