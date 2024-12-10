@@ -6,13 +6,6 @@
             "user_phone": "phone",
             "date": "date",
             "description": "text"
-        },
-        "2": {
-            "name": "User Registration",
-            "user_email": "email",
-            "user_phone": "phone",
-            "date": "date",
-            "description": "text"
         }
     }
 }

@@ -34,36 +34,51 @@ from tinydb import Query
 from .serializers import FormInputSerializer
 from .form_template_manager import db  # Подключаем вашу TinyDB
 
-class GetFormView(APIView):
+def determine_field_type(value):
+    """
+    Определяет тип значения на основе его формата.
+    """
+    if re.match(r"^\+?\d{10,15}$", value):  # Телефонный номер
+        return "phone"
+    elif re.match(r"^[\w\.-]+@[\w\.-]+\.\w{2,}$", value):  # Email
+        return "email"
+    elif re.match(r"^\d{4}-\d{2}-\d{2}$", value):  # Дата в формате YYYY-MM-DD
+        return "date"
+    else:
+        return "text"
+
+def find_matching_template(data):
+    """
+    Ищет подходящий шаблон в базе данных TinyDB.
+    """
+    templates = db.all()  # Получение всех шаблонов
+    for template in templates:
+        is_match = True
+        for field, field_type in template.items():
+            if field == "name":  # Игнорируем поле "name"
+                continue
+            if field not in data or determine_field_type(data[field]) != field_type:
+                is_match = False
+                break
+        if is_match:
+            return template["name"]  # Возвращаем имя подходящего шаблона
+    return None
+
+class GetFormAPIView(APIView):
+    """
+    API для поиска шаблона по данным формы.
+    """
     def post(self, request):
-        # Входные данные
-        input_fields = request.data
-        if not isinstance(input_fields, dict):
-            return Response({"error": "Invalid data format. Expected a dictionary."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            # Получение данных из POST-запроса
+            form_data = request.data  # DRF автоматически парсит JSON/форму
 
-        # Загружаем шаблоны из TinyDB
-        templates = db.all()
+            # Поиск подходящего шаблона
+            template_name = find_matching_template(form_data)
 
-        for template in templates:
-            # Извлекаем поля шаблона, исключая "name"
-            template_fields = {k: v for k, v in template.items() if k != "name"}
-
-            # Проверяем, что все поля шаблона есть в input_fields с совпадающими типами
-            if all(field in input_fields and input_fields[field] == field_type
-                   for field, field_type in template_fields.items()):
-                return Response({"template_name": template["name"]}, status=status.HTTP_200_OK)
-
-        return Response({"error": "No matching template found"}, status=status.HTTP_404_NOT_FOUND)
-
-    @staticmethod
-    def validate_type(value, expected_type):
-        """
-        Проверяет, соответствует ли тип значения ожидаемому типу.
-        """
-        type_map = {
-            "email": lambda v: isinstance(v, str) and "@" in v,
-            "phone": lambda v: isinstance(v, str) and v.isdigit(),
-            "date": lambda v: isinstance(v, str) and re.match(r"\d{4}-\d{2}-\d{2}", v),
-            "text": lambda v: isinstance(v, str)
-        }
-        return type_map.get(expected_type, lambda _: False)(value)
+            if template_name:
+                return Response({"template_name": template_name}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Шаблон не найден"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
